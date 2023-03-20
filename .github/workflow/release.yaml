@@ -1,0 +1,43 @@
+name: Github Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  build:
+    name: Build application
+    runs-on: windows-latest
+    steps:
+      - name: Set up Go
+        uses: actions/setup-go@v2
+        with:
+          go-version: '1.20'
+
+      - name: Check out code into the Go module directory
+        uses: actions/checkout@v2
+
+      - name: tidy
+        run: go mod tidy
+
+      - name: Build
+        run: go build -o shutdown-lol.exe
+
+      - name: Run UPX
+        uses: crazy-max/ghaction-upx@v2
+        with:
+          version: latest
+          files: |
+            ./shutdown-lol.exe
+          args: -fq
+
+      - name: Release and Upload
+        uses: softprops/action-gh-release@v1
+        if: startsWith(github.ref, 'refs/tags/')
+        with:
+          body: release
+          files: |
+            shutdown-lol.exe
+        env:
+          GITHUB_TOKEN: ${{ secrets.DEPLOY_KEY }}
