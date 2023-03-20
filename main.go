@@ -39,7 +39,7 @@ func main() {
 func kill(pid int) {
 	newProcess, err := process.NewProcess(int32(pid))
 	if err != nil {
-		fmt.Printf("关闭进程 %s 失败：%s\n", processName, err)
+		fmt.Printf("进程 %s 不存在：%s\n", processName, err)
 		return
 	}
 	err = newProcess.Kill()
